@@ -1,0 +1,26 @@
+# model_path:
+#   small: "./models/mistral-7b-instruct-v0.2.Q3_K_M.gguf"
+#   large: "./models/mistral-7b-instruct-v0.2.Q5_K_M.gguf"
+
+# groq_model_names:
+#   llama3_8b: "llama3-8b-8192"
+
+# model_config: 
+#   'max_new_tokens' : 512
+#   'temperature' : 0
+#   'context_length' : 4096
+#   'gpu_layers' : 0
+
+have_GPU : Flase
+
+huggingface_model_name : "./models/fusecap/"
+# huggingface_model_name : "noamrot/FuseCap"
+
+ocr_language : 'ch'
+translator_src_language : 'zh-CN'
+translator_des_language : 'en'
+
+result_json_keys:
+  image_id_key : "imageId"
+  image_caption_tokens_key : "imageCaptionTokens"
+  image_ocr_text_key : "imageOcrText"

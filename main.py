@@ -22,7 +22,7 @@ else:
 # Initialize models
 processor = BlipProcessor.from_pretrained(config["huggingface_model_name"])
 model = BlipForConditionalGeneration.from_pretrained(config["huggingface_model_name"]).to(device)
-ocr = PaddleOCR(use_angle_cls=True, lang=config["ocr_language"])
+ocr = PaddleOCR(use_angle_cls=True, lang=config["ocr_language"], device = device)
 nlp = spacy.load("en_core_web_sm")
 
 def generate_tokens_from_caption(generated_caption):
@@ -35,10 +35,15 @@ def generate_tokens_from_caption(generated_caption):
     return list(set(objects))
 
 def extract_text(image):
+    print("OCR CHECKING 0")
     img_array = np.array(image)
+    ocr = PaddleOCR(use_angle_cls=True, lang=config["ocr_language"], device = device)
     results = ocr.ocr(img_array, cls=True)
+    print("OCR CHECKING 1",str(results))
     if results[0] is None:
         return []
+    
+    print("OCR CHECKING 2")
     texts_with_positions = [line[1][0] for result in results for line in result]
     return texts_with_positions
 
@@ -51,11 +56,6 @@ def generate_caption(image):
     out = model.generate(**inputs, num_beams=3)
     generated_text = processor.decode(out[0], skip_special_tokens=True)
     return generated_text
-
-
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 result_json = {
     config["result_json_keys"]["image_id_key"]: "",
@@ -78,6 +78,7 @@ def upload():
         generated_text = generate_caption(image)
         tokens_from_caption = generate_tokens_from_caption(generated_text)
         ocr_text = extract_text(image)
+        print("OCR CHECKING",ocr_text)
         translated_text = [translate_text(text) for text in ocr_text]
         
         result_json[config["result_json_keys"]["image_id_key"]] = file.filename
@@ -89,4 +90,4 @@ def upload():
         return jsonify({"error": "Invalid file type"}), 400
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True,  port=5000)

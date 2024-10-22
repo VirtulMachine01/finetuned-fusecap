@@ -1,10 +1,9 @@
 have_GPU : Flase
+port_number : 5000
 
 huggingface_model_name : "./models/fusecap/"
 
 ocr_language : 'ch'
-# translator_src_language : 'zh-CN'
-# translator_des_language : 'en'
 
 result_json_keys:
   image_id_key : "imageId"
